@@ -1,0 +1,10 @@
+node_modules
+dist
+build
+coverage
+.turbo
+pnpm-lock.yaml
+*.tsbuildinfo
+
+# apps/shopify has its own prettier config (React Router template)
+apps/shopify

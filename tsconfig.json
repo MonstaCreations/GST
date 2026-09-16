@@ -1,0 +1,15 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/shared" },
+    { "path": "packages/core" },
+    { "path": "packages/gst" },
+    { "path": "packages/tax" },
+    { "path": "packages/invoice" },
+    { "path": "packages/pdf" },
+    { "path": "packages/email" },
+    { "path": "packages/reports" },
+    { "path": "packages/exports" },
+    { "path": "packages/storage" }
+  ]
+}
