@@ -1,0 +1,17 @@
+# Normalize line endings to LF in the repo (consistent across Windows + Ubuntu CI).
+* text=auto eol=lf
+
+# Explicit binaries (never normalize).
+*.ico binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+
+# Lockfile stays LF.
+pnpm-lock.yaml text eol=lf
