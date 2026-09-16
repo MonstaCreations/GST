@@ -204,7 +204,7 @@ template's default is retained **only** until the app is first linked and confir
 via `shopify app dev`; swapping it to a database-less session strategy is the **first M1
 integration task**.
 
-**Context.** Prisma here is session *infrastructure*, not business data, and it is the one
+**Context.** Prisma here is session _infrastructure_, not business data, and it is the one
 piece the template hard-wires. Removing it before the app runs once risks breaking auth in
 ways that can't be tested without a linked dev store.
 
@@ -218,12 +218,12 @@ presence in the tree is a known, tracked exception — not a reversal of D1.
 These are surfaced per the client rule "explain a Shopify limitation before working around
 it." Each is either handled above or flagged for a milestone.
 
-| ID  | Limitation                                          | Handling                                          |
-| --- | --------------------------------------------------- | ------------------------------------------------- |
-| L1  | No atomic counters in metafields                    | D3 + D4 (single-writer cron + interface)          |
-| L2  | Shopify Files URLs are public                       | D6 (interface; listing gated; future signed URLs) |
-| L3  | App offline token cannot live in Shopify            | D7 (Vercel secret)                                |
-| L4  | Metafields are not queryable                        | Reports use Bulk Operations (see DATABASE.md)     |
-| L5  | Metafields are size-capped, not append-friendly     | Audit/verification logs → JSONL in Shopify Files  |
-| L6  | Customer Account UI extension availability on Basic | Verify before M8; App-Proxy portal fallback       |
+| ID  | Limitation                                          | Handling                                                                                                                |
+| --- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| L1  | No atomic counters in metafields                    | D3 + D4 (single-writer cron + interface)                                                                                |
+| L2  | Shopify Files URLs are public                       | D6 (interface; listing gated; future signed URLs)                                                                       |
+| L3  | App offline token cannot live in Shopify            | D7 (Vercel secret)                                                                                                      |
+| L4  | Metafields are not queryable                        | Reports use Bulk Operations (see DATABASE.md)                                                                           |
+| L5  | Metafields are size-capped, not append-friendly     | Audit/verification logs → JSONL in Shopify Files                                                                        |
+| L6  | Customer Account UI extension availability on Basic | Verify before M8; App-Proxy portal fallback                                                                             |
 | L7  | Shopify CLI expects extensions inside the app       | Extensions live in `apps/shopify/extensions/*` (see D10); root `extensions/` kept as design specs pending consolidation |
