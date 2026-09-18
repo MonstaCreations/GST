@@ -5,3 +5,4 @@
 export * from './model';
 export * from './numbering';
 export * from './compute';
+export * from './credit-note';
