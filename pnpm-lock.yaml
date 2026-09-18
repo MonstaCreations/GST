@@ -42,6 +42,12 @@ importers:
 
   apps/shopify:
     dependencies:
+      '@gst-engine/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@gst-engine/gst':
+        specifier: workspace:*
+        version: link:../../packages/gst
       '@prisma/client':
         specifier: ^6.16.3
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)

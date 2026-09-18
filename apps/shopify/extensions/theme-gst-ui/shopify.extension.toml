@@ -1,0 +1,4 @@
+# Theme App Extension — GST invoice capture on the storefront cart page.
+# Works on Shopify Basic (no checkout extensibility required — DECISIONS.md D2).
+name = "theme-gst-ui"
+type = "theme"

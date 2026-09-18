@@ -21,4 +21,11 @@ export default defineWorkspace([
       include: ['tests/integration/**/*.test.ts'],
     },
   },
+  {
+    // Pure (Shopify-free) helper tests inside the app, e.g. metafield specs.
+    test: {
+      name: 'shopify-lib',
+      include: ['apps/shopify/app/lib/**/*.test.ts'],
+    },
+  },
 ]);

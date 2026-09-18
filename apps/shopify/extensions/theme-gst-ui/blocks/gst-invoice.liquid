@@ -1,0 +1,68 @@
+{% comment %}
+  GST Engine — cart-page GST invoice capture app block.
+  Merchants add this block to the cart page/section via the theme editor.
+  It calls the signature-verified App Proxy at /apps/gst/verify; no secrets or
+  external API calls happen in the browser.
+{% endcomment %}
+
+<div
+  class="gst-block"
+  data-gst-app
+  data-verify-url="{{ shop.url }}/apps/gst/verify"
+  data-open="{{ block.settings.default_open }}"
+  {{ block.shopify_attributes }}
+>
+  <label class="gst-toggle">
+    <input type="checkbox" class="gst-toggle__input" data-gst-toggle {% if block.settings.default_open %}checked{% endif %} />
+    <span class="gst-toggle__label">Need a GST invoice?</span>
+  </label>
+
+  <div class="gst-panel" data-gst-panel hidden>
+    <div class="gst-field">
+      <label class="gst-label" for="gst-gstin">GSTIN</label>
+      <div class="gst-input-row">
+        <input
+          id="gst-gstin"
+          class="gst-input"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          maxlength="15"
+          placeholder="27AAPFU0939F1ZV"
+          data-gst-input
+        />
+        <button type="button" class="gst-btn" data-gst-verify>Verify</button>
+      </div>
+      <p class="gst-hint" data-gst-status role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="gst-result" data-gst-result hidden>
+      <p class="gst-verified">✓ GST Verified</p>
+      <dl class="gst-details">
+        <dt>Company Name</dt><dd data-gst-legal-name></dd>
+        <dt>Registered Address</dt><dd data-gst-address></dd>
+        <dt>City</dt><dd data-gst-city></dd>
+        <dt>State</dt><dd data-gst-state></dd>
+      </dl>
+      <button type="button" class="gst-btn gst-btn--primary" data-gst-use>Use Verified Details</button>
+      <p class="gst-applied" data-gst-applied hidden>GST details attached to this order.</p>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "GST Invoice",
+  "target": "section",
+  "stylesheet": "gst-invoice.css",
+  "javascript": "gst-invoice.js",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "default_open",
+      "label": "Expand by default",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

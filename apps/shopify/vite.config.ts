@@ -52,6 +52,11 @@ export default defineConfig({
     reactRouter(),
     tsconfigPaths(),
   ],
+  // Workspace GST packages ship TypeScript source (main → src/index.ts); Vite must
+  // transpile them for SSR rather than treat them as external node modules.
+  ssr: {
+    noExternal: [/^@gst-engine\//],
+  },
   build: {
     assetsInlineLimit: 0,
   },

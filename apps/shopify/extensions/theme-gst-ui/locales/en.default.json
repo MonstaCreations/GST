@@ -1,0 +1,9 @@
+{
+  "gst": {
+    "toggle": "Need a GST invoice?",
+    "gstin_label": "GSTIN",
+    "verify": "Verify",
+    "verified": "GST Verified",
+    "use_details": "Use Verified Details"
+  }
+}

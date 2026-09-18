@@ -213,6 +213,40 @@ presence in the tree is a known, tracked exception — not a reversal of D1.
 
 ---
 
+## D12 — API version pinned to 2026-07 (SDK-supported)
+
+**Status:** Accepted · 2026-09-18
+
+**Decision.** Use `2026-07` (`ApiVersion.July26`) in both `shopify.app.toml`
+(`[webhooks].api_version`) and `shopify.server.ts`.
+
+**Context.** The CLI wrote `api_version = "2026-10"` on link, but the installed
+`@shopify/shopify-api` enum only goes up to `2026-07` (2026-10 is the not-yet-released
+next version). Code used `ApiVersion.October25` — a mismatch with the toml.
+
+**Consequences.** Both files now agree on a version the SDK actually supports. Bump to a
+newer version only after upgrading the SDK.
+
+---
+
+## D13 — Scopes set; distribution left as AppStore pending confirmation
+
+**Status:** Accepted · 2026-09-18
+
+**Decision.** Set Admin API scopes to `read/write` for customers, orders, products, and
+files. Leave `distribution: AppDistribution.AppStore` unchanged in code, with a prominent
+warning comment, until the Dev Dashboard distribution is confirmed.
+
+**Context.** Intended production use is a **custom / single-merchant** app for Rinstruments,
+but silently switching distribution changes the install flow and triggers mandatory
+compliance webhooks. The scopes are the minimum needed for GST metafields + PDF Files.
+
+**Consequences.** Scopes take effect on the next auth/update. Distribution is a one-line
+change once confirmed; flagged in `shopify.server.ts` and PROJECT_STATE.md so it isn't
+missed before production.
+
+---
+
 ## Known Shopify limitations (tracked, not yet decisions)
 
 These are surfaced per the client rule "explain a Shopify limitation before working around

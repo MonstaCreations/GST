@@ -1,41 +1,62 @@
-# This file stores configurations for your Shopify app.
-client_id = ""
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "13e347ec7b9754b276eac618d49e07dd"
+application_url = "https://shopify.dev/apps/default-app-home"
+embedded = true
+name = "GST Engine"
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+# GST Engine required Admin API scopes (docs/DECISIONS.md D13).
+# read/write_files → invoice PDFs in Shopify Files; the rest → GST metafields on
+# customers/orders/products. No unnecessary scopes are requested.
+scopes = "read_customers,write_customers,read_orders,write_orders,read_products,write_products,read_files,write_files"
+
+# App Proxy: storefront theme extension calls /apps/gst/verify, which Shopify
+# forwards (signature-verified) to <application_url>/proxy/verify. On `shopify app
+# dev` the CLI updates these URLs to the tunnel automatically.
+[app_proxy]
+url = "https://shopify.dev/apps/default-app-home/proxy"
+subpath = "gst"
+prefix = "apps"
 
 [webhooks]
-api_version = "2025-10"
+# Kept in sync with shopify.server.ts (ApiVersion.July26). 2026-10 is not yet in
+# the installed SDK — see docs/DECISIONS.md D12.
+api_version = "2026-07"
 
-  # Handled by: /app/routes/webhooks.app.uninstalled.tsx
   [[webhooks.subscriptions]]
   uri = "/webhooks/app/uninstalled"
-  topics = ["app/uninstalled"]
+  topics = [ "app/uninstalled" ]
 
-  # Handled by: /app/routes/webhooks.app.scopes_update.tsx
   [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
   uri = "/webhooks/app/scopes_update"
+  topics = [ "app/scopes_update" ]
 
-  # Webhooks can have filters
-  # Only receive webhooks for product updates with a product price >= 10.00
-  # See: https://shopify.dev/docs/apps/build/webhooks/customize/filters
-  # [[webhooks.subscriptions]]
-  # topics = ["products/update"]
-  # uri = "/webhooks/products/update"
-  # filter = "variants.price:>=10.00"
+  # GST Engine order/refund/customer events (handlers acknowledge in M1; invoice
+  # + credit-note processing lands in M7/M13).
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/orders/create"
+  topics = [ "orders/create" ]
 
-  # Mandatory compliance topic for public apps only
-  # See: https://shopify.dev/docs/apps/build/privacy-law-compliance
-  # [[webhooks.subscriptions]]
-  # uri = "/webhooks/customers/data_request"
-  # compliance_topics = ["customers/data_request"]
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/orders/paid"
+  topics = [ "orders/paid" ]
 
-  # [[webhooks.subscriptions]]
-  # uri = "/webhooks/customers/redact"
-  # compliance_topics = ["customers/redact"]
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/orders/updated"
+  topics = [ "orders/updated" ]
 
-  # [[webhooks.subscriptions]]
-  # uri = "/webhooks/shop/redact"
-  # compliance_topics = ["shop/redact"]
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/refunds/create"
+  topics = [ "refunds/create" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/customers/update"
+  topics = [ "customers/update" ]
+
+[auth]
+redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true

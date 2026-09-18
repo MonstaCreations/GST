@@ -1,14 +1,14 @@
-import type { LoaderFunctionArgs } from "react-router";
-import { redirect, Form, useLoaderData } from "react-router";
+import type { LoaderFunctionArgs } from 'react-router';
+import { redirect, Form, useLoaderData } from 'react-router';
 
-import { login } from "../../shopify.server";
+import { login } from '../../shopify.server';
 
-import styles from "./styles.module.css";
+import styles from './styles.module.css';
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
-  if (url.searchParams.get("shop")) {
+  if (url.searchParams.get('shop')) {
     throw redirect(`/app?${url.searchParams.toString()}`);
   }
 
@@ -39,16 +39,16 @@ export default function App() {
         )}
         <ul className={styles.list}>
           <li>
-            <strong>Product feature</strong>. Some detail about your feature and
-            its benefit to your customer.
+            <strong>Product feature</strong>. Some detail about your feature and its benefit to your
+            customer.
           </li>
           <li>
-            <strong>Product feature</strong>. Some detail about your feature and
-            its benefit to your customer.
+            <strong>Product feature</strong>. Some detail about your feature and its benefit to your
+            customer.
           </li>
           <li>
-            <strong>Product feature</strong>. Some detail about your feature and
-            its benefit to your customer.
+            <strong>Product feature</strong>. Some detail about your feature and its benefit to your
+            customer.
           </li>
         </ul>
       </div>

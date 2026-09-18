@@ -1,0 +1,139 @@
+/* GST Engine cart block — mobile-first, minimal, theme-neutral. */
+.gst-block {
+  --gst-accent: #1f6feb;
+  --gst-border: #d7dbe0;
+  --gst-ink: #1a1f2b;
+  --gst-muted: #6b7280;
+  --gst-good: #1a7f4b;
+  --gst-warn: #9a6700;
+  --gst-error: #b42318;
+  font-size: 15px;
+  color: var(--gst-ink);
+  margin: 16px 0;
+}
+.gst-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.gst-toggle__input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gst-accent);
+}
+.gst-panel {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid var(--gst-border);
+  border-radius: 12px;
+  background: #fff;
+}
+.gst-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+.gst-input-row {
+  display: flex;
+  gap: 8px;
+}
+.gst-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--gst-border);
+  border-radius: 8px;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.gst-input:focus {
+  outline: 2px solid var(--gst-accent);
+  outline-offset: 1px;
+  border-color: var(--gst-accent);
+}
+.gst-btn {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  border: 1px solid var(--gst-accent);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--gst-accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+.gst-btn:hover {
+  background: rgba(31, 111, 235, 0.06);
+}
+.gst-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.gst-btn--primary {
+  background: var(--gst-accent);
+  color: #fff;
+  margin-top: 12px;
+  width: 100%;
+}
+.gst-btn--primary:hover {
+  background: #1a5fd0;
+}
+.gst-hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--gst-muted);
+}
+.gst-hint--muted {
+  color: var(--gst-muted);
+}
+.gst-hint--warn {
+  color: var(--gst-warn);
+}
+.gst-hint--error {
+  color: var(--gst-error);
+}
+.gst-result {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--gst-border);
+}
+.gst-verified {
+  margin: 0 0 8px;
+  color: var(--gst-good);
+  font-weight: 700;
+}
+.gst-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px 0;
+  margin: 0;
+}
+.gst-details dt {
+  font-size: 12px;
+  color: var(--gst-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.gst-details dd {
+  margin: 0 0 8px;
+  font-weight: 500;
+}
+.gst-applied {
+  margin: 10px 0 0;
+  color: var(--gst-good);
+  font-size: 13px;
+  font-weight: 600;
+}
+@media (min-width: 560px) {
+  .gst-details {
+    grid-template-columns: 160px 1fr;
+    align-items: baseline;
+  }
+  .gst-details dd {
+    margin-bottom: 4px;
+  }
+}
