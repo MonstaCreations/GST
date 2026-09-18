@@ -1,0 +1,27 @@
+# Local development ONLY — PostgreSQL for Shopify app session storage.
+# This mirrors the production Prisma/Postgres path so it can be tested locally
+# (no production-only code path). It stores sessions only, never GST business data.
+#
+#   docker compose up -d
+#   DATABASE_URL=postgresql://gst:gst@localhost:5432/gst_sessions
+#   pnpm --filter @gst-engine/shopify exec prisma migrate deploy
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gst-engine-postgres
+    environment:
+      POSTGRES_USER: gst
+      POSTGRES_PASSWORD: gst
+      POSTGRES_DB: gst_sessions
+    ports:
+      - '5432:5432'
+    volumes:
+      - gst_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gst -d gst_sessions']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  gst_pg_data:

@@ -9,8 +9,10 @@ generator client {
 // enough when changing adapters.
 // See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.sqlite"
+  provider = "postgresql"
+  // Set DATABASE_URL in .env (local) and in Vercel project env (prod). This DB is
+  // used ONLY for Shopify app session storage — no GST business data (docs/DECISIONS.md).
+  url      = env("DATABASE_URL")
 }
 
 model Session {

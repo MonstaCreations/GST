@@ -2,65 +2,69 @@
 
 Living status for GST Engine. Updated at each milestone. See `docs/` for detail.
 
-**Last updated:** 2026-09-18 · **Current phase:** M1 — Shopify Integration Wiring (complete)
+**Last updated:** 2026-09-18 · **Current phase:** Vercel deployment prep (complete)
 
 ---
 
 ## Current phase
 
-**M1 wiring — DONE and verified.** Next: M2/M3 (customer GST profile persistence) or M6 (PDF), both buildable on the current dev store + mock provider.
+**Vercel-readiness — DONE and verified.** The app builds for Vercel, session storage is
+PostgreSQL (serverless-safe), and nothing is hard-coded. Actual deploy is gated only on a
+Vercel project + `DATABASE_URL` + the production URL (see Blocked). No GST features were
+added in this phase.
 
-## Verification (this milestone)
-
-- `tsc -b` (packages) — ✅
+## Verification (this phase)
+- `pnpm exec tsc -b` (packages) — ✅
 - App `react-router typegen && tsc --noEmit` — ✅
-- App `react-router build` (client + SSR, bundles `@gst-engine/gst`) — ✅
-- Vitest — ✅ **69 tests** (65 engine + 4 metafield-definition specs)
+- `pnpm build` (turbo, 11 tasks incl. app) — ✅ (no DB needed)
+- `VERCEL=1 react-router build` (Vercel preset active) — ✅
+- `prisma generate` (postgres client) — ✅
+- Vitest — ✅ **69 tests**
+- Root lint + Prettier — ✅
 
 ## Completed features (BUILT + TESTED)
-
-- **Engine packages** (unchanged, reused): core, shared, gst, tax, invoice — 65 tests.
-- **M1 Shopify wiring:**
-  - API version reconciled to `2026-07` in both `shopify.app.toml` and `shopify.server.ts`.
-  - Admin API **scopes** set: `read/write` customers, orders, products, files.
-  - **Metafield definitions** (18) as pure data + idempotent `ensureMetafieldDefinitions()` wired into `afterAuth` (customer `gst.*`, product `tax.*`, order `invoice.*`/`gst.snapshot`/`credit_note.reference`). Spec tested.
-  - **App Proxy verify route** `proxy.verify.tsx` (`/apps/gst/verify`) → `getVerificationService()` → `@gst-engine/gst` (MockGSTProvider); signature-verified, rate-limited, safe errors, never blocks checkout.
-  - **Theme App Extension** `extensions/theme-gst-ui/` — cart-page GST block (toggle → GSTIN → Verify → states → auto-fill → "Use Verified Details" writes cart attributes). Functional liquid + JS + CSS.
-  - **Webhook handlers** registered + scaffolded: `orders/create`, `orders/paid`, `orders/updated`, `refunds/create`, `customers/update` (+ existing `app/uninstalled`, `app/scopes_update`).
-  - Prisma session storage **preserved** (auth intact).
+- **Engine packages:** core, shared, gst, tax, invoice (65 tests).
+- **M1 Shopify wiring:** API version 2026-07, scopes, metafield definitions + afterAuth,
+  App-Proxy verify route, theme extension, order/refund/customer webhooks (4 metafield tests).
+- **Vercel deployment prep:**
+  - Prisma datasource **sqlite → postgresql**, `url = env("DATABASE_URL")`; migration
+    regenerated as Postgres DDL + `migration_lock.toml`. `PrismaSessionStorage` unchanged.
+  - Prisma stays **session-storage only** (no GST business data).
+  - `react-router.config.ts` with the **Vercel preset** (guarded by `VERCEL` so local
+    `pnpm build` stays a standard, testable Node build).
+  - Scripts: `postinstall: prisma generate`, `vercel-build: prisma generate && prisma
+    migrate deploy && react-router build`; `apps/shopify/vercel.json` sets the build command.
+  - `@vercel/react-router` added; `@shopify/shopify-app-session-storage-prisma@9.0.1`
+    confirmed compatible with the installed Prisma 6.19.3 (no upgrade).
+  - `docker-compose.yml` (local Postgres) + `.env.example` `DATABASE_URL` so the Postgres
+    path is testable locally (no production-only code path).
 
 ## Pending features (designed, not yet built)
-
-- M3 customer GST profile read/write to metafields + guest cart-attribute path + returning-customer reuse.
-- M5 wiring: real Shopify orders → invoice records (order metafields), production `InvoiceNumberProvider` (app-installation counter).
-- M6 PDF template + Puppeteer renderer + Shopify Files upload.
-- M7 invoice automation (reconciler) + email provider + customer portal.
-- M8 credit notes + reports; M9 Tally + admin dashboard + verification logs; M10 real GST provider; M11 deploy + migration.
+- M3 customer GST profile persistence · M5 wiring (orders→invoice records) · M6 PDF ·
+  M7 automation + email + portal · M8 credit notes + reports · M9 Tally + admin + logs ·
+  M10 real GST provider.
 
 ## Blocked features
-
-- **Real GST provider (M10):** awaiting API credentials. (Mock in use — not blocking.)
-- **Production email (M7):** needs a verified sending domain.
-- **Deploy (M11):** session storage must move off SQLite/Prisma for serverless (see Known issues); Vercel adapter + `vercel.json` not yet added.
+- **Actual Vercel deploy:** needs a Vercel project (Root Directory `apps/shopify`), a
+  hosted `DATABASE_URL`, and the production URL. Then update Shopify URLs + `shopify app
+  deploy` (a separate, deliberate step — not done here).
+- **Real GST provider (M10):** API credentials. **Production email (M7):** verified domain.
 
 ## Known issues
-
-1. **Session storage vs serverless + expiring tokens.** `future.expiringOfflineAccessTokens: true` + SQLite Prisma store won't work on Vercel; a durable session store (Turso/Neon/KV) must be chosen before deploy (session infra only — business data stays in Shopify). See DECISIONS D7/D11 + PART 6 of the audit.
-2. **App `lint` script broken** (template uses ESLint-8 `--ignore-path` while ESLint-9 flat config is resolved from repo root). App code still type-checks + builds; fix is a tooling reconciliation (own flat config for the app). Root/packages lint is clean.
-3. **App Proxy URL** in toml uses the placeholder host; `shopify app dev` updates it to the tunnel. Verify the `/apps/gst/verify` → `/proxy/verify` mapping live.
-4. **Distribution = AppStore** in code (see D13) — must be confirmed/changed for a custom single-merchant app before production.
+1. ~~Session storage vs serverless~~ — **resolved**: PostgreSQL + Vercel preset. (For pooled
+   Postgres, optionally add a `directUrl` for migrations later.)
+2. **App `lint` script broken** (ESLint 8/9 template clash; code type-checks + builds).
+   Root/packages lint clean. Tooling fix pending.
+3. **Shopify URLs are placeholders** in `shopify.app.toml` (`application_url`,
+   `redirect_urls`, `app_proxy.url`) — set to the Vercel URL before `shopify app deploy`.
+4. **Distribution = AppStore** in code (D13) — confirm custom/single-merchant before prod.
 
 ## Required merchant inputs (not blocking current build)
-
-- App **distribution** decision (custom vs App Store).
-- Session-storage choice for production.
-- Seller GST identity + **bank details** for invoices.
-- Invoice numbering **start number** at cutover.
-- GST API provider + credentials.
-- Tax-inclusive vs exclusive pricing; current HSN source on products.
-- Email provider + verified domain; invoice logo asset.
-- Customer accounts type (new vs classic) for the portal extension.
+- Vercel project + hosted Postgres URL · production domain · app distribution decision ·
+  seller GST identity + bank details · invoice numbering start · GST API creds · email
+  provider + verified domain · logo · tax-inclusive pricing + HSN source.
 
 ## Next action
-
-Proceed to **M3 (customer GST profile persistence)** and **M5 wiring (orders → invoice records)** on the dev store with the mock provider; then M6 PDF. Continue committing per milestone.
+Repository is Vercel-ready. Either (a) create the Vercel project + Postgres and deploy
+(needs the URL, then update Shopify config), or (b) resume GST features at **M3/M5/M6** on
+the dev store with the mock provider. Continue committing per milestone.
