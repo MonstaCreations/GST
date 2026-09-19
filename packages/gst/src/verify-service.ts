@@ -9,14 +9,21 @@
  */
 import { stateNameForCode } from '@gst-engine/core';
 import type { GSTVerificationProvider, GSTVerificationResult } from './provider';
+import { ProviderInvalidGstinError } from './provider';
 import { normalizeGstinInput, stateCodeFromGstin, validateGstin } from './gstin';
 import type { GstinInvalidReason } from './gstin';
+
+/**
+ * Why a GSTIN was rejected: our own validator's reasons, plus `provider_rejected`
+ * for a GSTIN that passed local validation but the provider itself refused.
+ */
+export type VerificationInvalidReason = GstinInvalidReason | 'provider_rejected';
 
 export type VerificationOutcome =
   | { kind: 'verified'; result: GSTVerificationResult }
   | { kind: 'inactive'; result: GSTVerificationResult }
   | { kind: 'not_found'; gstin: string }
-  | { kind: 'invalid'; gstin: string; reason: GstinInvalidReason }
+  | { kind: 'invalid'; gstin: string; reason: VerificationInvalidReason }
   | { kind: 'unavailable'; gstin: string; message: string };
 
 export interface VerificationService {
@@ -37,6 +44,11 @@ export function createVerificationService(provider: GSTVerificationProvider): Ve
       try {
         result = await provider.verifyGSTIN(gstin);
       } catch (err) {
+        // The provider rejecting the GSTIN is a statement about the GSTIN, not about
+        // the provider's health, so it stays `invalid` instead of `unavailable`.
+        if (err instanceof ProviderInvalidGstinError) {
+          return { kind: 'invalid', gstin, reason: 'provider_rejected' };
+        }
         return {
           kind: 'unavailable',
           gstin,

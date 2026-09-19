@@ -8,4 +8,8 @@ export * from './gstin';
 export * from './normalize';
 export * from './mock-provider';
 export * from './gstverify-provider';
+export * from './finagg-config';
+export * from './finagg-mapping';
+export * from './finagg-client';
+export * from './finagg-provider';
 export * from './verify-service';

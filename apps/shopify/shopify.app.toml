@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "13e347ec7b9754b276eac618d49e07dd"
-application_url = "https://shopify.dev/apps/default-app-home"
+application_url = "https://gst-shopify.vercel.app"
 embedded = true
 name = "GST Engine"
 
@@ -15,7 +15,7 @@ scopes = "read_customers,write_customers,read_orders,write_orders,read_products,
 # forwards (signature-verified) to <application_url>/proxy/verify. On `shopify app
 # dev` the CLI updates these URLs to the tunnel automatically.
 [app_proxy]
-url = "https://shopify.dev/apps/default-app-home/proxy"
+url = "https://gst-shopify.vercel.app/proxy"
 subpath = "gst"
 prefix = "apps"
 
@@ -55,8 +55,14 @@ api_version = "2026-07"
   topics = [ "customers/update" ]
 
 [auth]
-redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
+# Must match shopify.server.ts `authPathPrefix: '/auth'` — the SDK builds its OAuth
+# callback as `${authPathPrefix}/callback`. Both paths below are served by the
+# `auth.$` splat route. `/api/auth/callback` is deliberately NOT listed: this app
+# does not serve it.
+redirect_urls = [
+  "https://gst-shopify.vercel.app/auth/callback",
+  "https://gst-shopify.vercel.app/auth/shopify/callback"
+]
 
 [build]
-include_config_on_deploy = true
 automatically_update_urls_on_dev = true

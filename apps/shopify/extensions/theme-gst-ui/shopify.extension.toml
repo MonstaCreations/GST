@@ -2,3 +2,4 @@
 # Works on Shopify Basic (no checkout extensibility required — DECISIONS.md D2).
 name = "theme-gst-ui"
 type = "theme"
+uid = "54732709-f837-5187-1200-d70f97e4cd2714ae41b0"

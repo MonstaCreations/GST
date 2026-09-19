@@ -43,6 +43,19 @@ export class ProviderTimeoutError extends ProviderError {
   }
 }
 
+/**
+ * The provider itself rejected the GSTIN as invalid / unknown to GSTN.
+ *
+ * Distinct from `ProviderUnavailableError`: this is a statement about the GSTIN,
+ * not about the provider's health, so the verification service surfaces it as
+ * `invalid` rather than `unavailable`.
+ */
+export class ProviderInvalidGstinError extends ProviderError {
+  constructor(providerName: string) {
+    super(`GST provider "${providerName}" rejected the GSTIN`, 'PROVIDER_INVALID_GSTIN');
+  }
+}
+
 /** The provider is unreachable or returned an unusable response. */
 export class ProviderUnavailableError extends ProviderError {
   constructor(providerName: string, cause?: unknown) {
